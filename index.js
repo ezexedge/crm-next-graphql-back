@@ -13,6 +13,6 @@ const server = new ApolloServer({
 
 
 server.listen().then( ({url})=>{
-    console.log(`servidor listo en la url ${url}`)
+    console.log(`servidor url : ${url}`)
 
 })
