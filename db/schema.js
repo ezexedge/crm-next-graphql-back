@@ -44,7 +44,13 @@ const typeDefs = gql`
     }
 
     type Query{
+        #usuarios
         obtenerUsuario(token : String!) : Usuario
+
+        #prodcutos
+        obtenerProductos: [Producto]
+        obtenerProducto(id: ID!): Producto
+
     }
 
 
@@ -57,6 +63,8 @@ const typeDefs = gql`
         
         #productos
         nuevoProducto(input: ProductoInput): Producto
+        actualizarProducto(id: ID! , input : ProductoInput): Producto
+        eliminarProducto(id: ID!) : String
     }
 
 `

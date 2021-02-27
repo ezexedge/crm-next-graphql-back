@@ -19,7 +19,26 @@ const resolvers = {
             const usuarioId = await jwt.verify(token ,process.env.SECRETA)
 
             return usuarioId
+        },
+        obtenerProductos : async () => {
+            try{
+                
+                const productos = await Producto.find({})
+                return productos
+
+            }catch(error){
+                console.log(error)
+            }
+        },
+        obtenerProducto : async (_,{id}) => {
+            const producto = await Producto.findById(id)
+            if(!producto){
+                throw new Error('producto no encontra')
+            }
+
+            return producto
         }
+
     },
 
     Mutation : {
@@ -88,6 +107,27 @@ const resolvers = {
                 console.log(error)
 
             }
+        },
+        
+        actualizarProducto : async (_,{id,input}) => {
+            let producto = await  Producto.findById(id)
+            if(!producto){
+                throw new Error('producto no encontra')
+            }
+
+                producto  = await Producto.findOneAndUpdate({_id : id},input,{new : true})
+            return producto
+            
+        },
+        eliminarProducto : async (_,{id}) => {
+            let producto = await  Producto.findById(id)
+            if(!producto){
+                throw new Error('producto no encontra')
+            }
+
+            await Producto.findByIdAndDelete({_id: id})
+
+            return "producto eliminadom "
         }
     }
 }
