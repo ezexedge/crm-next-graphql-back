@@ -43,13 +43,41 @@ const resolvers = {
             try{
 
 
-            const clientes = Cliente.find({})
+            const clientes = await Cliente.find({})
 
             return clientes
 
             }catch(error){ 
             console.log(error)
         }
+        
+    },
+    obtenerClientesVendedor: async(_,{},ctx) => {
+        try{
+
+
+            const clientes = await Cliente.find({vendedor: ctx.usuario.id.toString()})
+
+            return clientes
+
+            }catch(error){ 
+            console.log(error)
+        }
+    },
+
+    obtenerCliente: async(_,{id},ctx)  => {
+            const cliente = await Cliente.findById(id)
+
+            if(!cliente){
+                throw new Error("Cliente no encontrado")
+            }
+
+
+            if(cliente.vendedor.toString() !== ctx.usuario.id){
+                throw new Error("No tienes credenciales")
+            }
+
+            return cliente
     }
 
     },
@@ -173,6 +201,37 @@ const resolvers = {
          }
 
                 
+        },
+        actualizarCliente: async (_,{id,input},ctx) => {
+                let cliente = await Cliente.findById(id)
+
+                if(!cliente){
+                    throw new Error('el cliente no existe')
+                }
+
+                if(cliente.vendedor.toString() !== ctx.usuario.id){
+                    throw new Error("No tienes credenciales")
+                }
+                
+                cliente = await Cliente.findOneAndUpdate({_id:id},input,{new: true})
+
+                return cliente
+
+
+        },
+        eliminarCliente: async (_,{id},ctx) => {
+            let cliente = await Cliente.findById(id)
+
+                if(!cliente){
+                    throw new Error('el cliente no existe')
+                }
+
+                if(cliente.vendedor.toString() !== ctx.usuario.id){
+                    throw new Error("No tienes credenciales")
+                }
+                await Cliente.findOneAndDelete({_id: id})
+                return 'Cliente eliminado'
+
         }
     }
 }
