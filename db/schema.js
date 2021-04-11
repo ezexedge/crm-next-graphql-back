@@ -1,7 +1,7 @@
-const { gql } = require('apollo-server')
+const {  gql } = require('apollo-server');
 
+// Schema
 const typeDefs = gql`
-
     type Usuario {
         id: ID
         nombre: String
@@ -9,8 +9,10 @@ const typeDefs = gql`
         email: String
         creado: String
     }
-
-
+    
+    type Token {
+        token: String
+    }
     type Producto {
         id: ID
         nombre: String
@@ -18,18 +20,17 @@ const typeDefs = gql`
         precio: Float
         creado: String
     }
-
-
     type Cliente {
         id: ID
         nombre: String
-        apellido : String
+        apellido: String
         empresa: String
-        email:  String
+        email: String
         telefono: String
         vendedor: ID
     }
-    type Pedido{
+    
+    type Pedido {
         id: ID
         pedido: [PedidoGrupo]
         total: Float
@@ -38,30 +39,35 @@ const typeDefs = gql`
         fecha: String
         estado: EstadoPedido
     }
-
     type PedidoGrupo{
         id: ID
         cantidad: Int
+        nombre: String
+        precio: Float
     }
-
-    input AutenticarInput{
-        email: String!
-        password: String!
+    type TopCliente {
+        total: Float
+        cliente: [Cliente]
     }
-
-    input UsuarioInput{
-        nombre : String!
+    type TopVendedor {
+        total: Float
+        vendedor: [Usuario]
+    }
+    input UsuarioInput {
+        nombre: String!
         apellido: String!
         email: String!
         password: String!
     }
-
+    input AutenticarInput{
+        email: String!
+        password: String!
+    }
     input ProductoInput {
-        nombre : String!
+        nombre: String!
         existencia: Int!
         precio: Float!
     }
-
     input ClienteInput {
         nombre: String!
         apellido: String!
@@ -69,77 +75,60 @@ const typeDefs = gql`
         email: String!
         telefono: String
     }
-
     input PedidoProductoInput {
         id: ID
         cantidad: Int
+        nombre: String
+        precio: Float
     }
-
-    input PedidoInput{
+    input PedidoInput {
         pedido: [PedidoProductoInput]
-        total: Float!
-        cliente: ID!
-        estado: EstadoPedido 
-
+        total: Float
+        cliente: ID
+        estado: EstadoPedido
     }
-
-    enum EstadoPedido{
+    enum EstadoPedido {
         PENDIENTE
         COMPLETADO
         CANCELADO
     }
-
-
-
-    type Token{
-        token : String
-    }
-
-    type Query{
-        #usuarios
-        obtenerUsuario(token : String!) : Usuario
-
-        #prodcutos
+    type Query {
+        #Usuarios
+        obtenerUsuario: Usuario
+        # Productos
         obtenerProductos: [Producto]
-        obtenerProducto(id: ID!): Producto
-
-        #clientes
+        obtenerProducto(id: ID!) : Producto
+        #Clientes
         obtenerClientes: [Cliente]
         obtenerClientesVendedor: [Cliente]
-        obtenerCliente(id: ID!) : Cliente
-
-        #Pedidos
+        obtenerCliente(id: ID!): Cliente
+        # Pedidos
         obtenerPedidos: [Pedido]
         obtenerPedidosVendedor: [Pedido]
         obtenerPedido(id: ID!) : Pedido
+        obtenerPedidosEstado(estado: String!): [Pedido]
+        # Busquedas Avanzadas
+        mejoresClientes: [TopCliente]
+        mejoresVendedores: [TopVendedor]
+        buscarProducto(texto: String!) : [Producto]
     }
-
-
-
-
-
-    type Mutation{
-        #usuarios
-        
-        nuevoUsuario (input : UsuarioInput): Usuario
-        autenticarUsuario (input : AutenticarInput): Token
-        
-        #productos
-        nuevoProducto(input: ProductoInput): Producto
-        actualizarProducto(id: ID! , input : ProductoInput): Producto
-        eliminarProducto(id: ID!) : String
-
-
-        #clientes 
-        nuevoCliente(input : ClienteInput): Cliente
-        actualizarCliente(id: ID!, input: ClienteInput): Cliente 
+    type Mutation {
+        # Usuarios
+        nuevoUsuario(input: UsuarioInput) : Usuario
+        autenticarUsuario(input: AutenticarInput) : Token
+        # Productos
+        nuevoProducto(input: ProductoInput) : Producto
+        actualizarProducto( id: ID!, input : ProductoInput ) : Producto
+        eliminarProducto( id: ID! ) : String
+        # Clientes
+        nuevoCliente(input: ClienteInput) : Cliente
+        actualizarCliente(id: ID!, input: ClienteInput): Cliente
         eliminarCliente(id: ID!) : String
-
-        #pedido
-        nuevoPedido(input : PedidoInput): Pedido
+        # Pedidos
+        nuevoPedido(input: PedidoInput): Pedido
+        actualizarPedido(id: ID!, input: PedidoInput ) : Pedido
+        eliminarPedido(id: ID!) : String
     }
+`;
 
-`
-
-
-module.exports = typeDefs
+module.exports = typeDefs;
