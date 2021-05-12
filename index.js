@@ -14,15 +14,17 @@ const server = new ApolloServer({
     resolvers,
     context : ({req}) =>{
 
+        console.log(req.headers)
+
         const token = req.headers['authorization'] || ''
 
         if(token){
             
             try{
 
-                const usuario = jwt.verify(token , process.env.SECRETA)
+                const usuario = jwt.verify(token.replace('Bearer ','') , process.env.SECRETA)
 
-                console.log(usuario)
+                console.log('wwwwwwwiwii',usuario)
 
                 return {
                     usuario
